@@ -1,0 +1,1340 @@
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import {
+  PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid,
+} from "recharts";
+import {
+  LayoutGrid, Users, History as HistoryIcon,
+  Pencil, X, Award, ChevronLeft, ChevronRight,
+  ArrowLeft, Search,
+} from "lucide-react";
+
+/* ------------------------------------------------------------------ */
+/* Design tokens                                                       */
+/* ------------------------------------------------------------------ */
+const T = {
+  bg: "#F7F8FA",
+  panel: "#FFFFFF",
+  panel2: "#F6F7F9",
+  border: "#E5E7EB",
+  borderLight: "#D8DBE1",
+  text: "#111827",
+  muted: "#667085",
+  faint: "#98A2B3",
+  cyan: "#4F46E5",
+  cyanDim: "rgba(79,70,229,0.08)",
+  cyanHover: "#4338CA",
+  violet: "#7C3AED",
+  violetDim: "rgba(124,58,237,0.08)",
+  amber: "#B45309",
+  amberDim: "rgba(180,83,9,0.09)",
+  green: "#0F9D58",
+  greenDim: "rgba(15,157,88,0.08)",
+  rose: "#D92D20",
+  roseDim: "rgba(217,45,32,0.08)",
+  shadowSm: "0 1px 2px rgba(16,24,40,0.05)",
+  shadowMd: "0 1px 3px rgba(16,24,40,0.08), 0 1px 2px rgba(16,24,40,0.04)",
+};
+
+const AVATAR_COLORS = ["#4F46E5", "#0284C7", "#0F9D58", "#B45309", "#DB2777", "#7C3AED", "#0891B2", "#65A30D"];
+
+const FONT_MONO =
+  "'IBM Plex Mono','JetBrains Mono','SFMono-Regular',Consolas,monospace";
+const FONT_SANS =
+  "'Inter','Segoe UI',system-ui,-apple-system,sans-serif";
+
+/* ------------------------------------------------------------------ */
+/* Skill checklist definition                                          */
+/* ------------------------------------------------------------------ */
+const SKILL_CHECKLIST = [
+  { key: "totalIt", label: "Total IT Experience", type: "years" },
+  { key: "expUrolime", label: "Experience in Urolime", type: "years" },
+  { key: "linux", label: "Linux Administration", type: "rating" },
+  { key: "windows", label: "Windows Administration", type: "rating" },
+  { key: "aws", label: "Public Cloud — AWS", type: "rating" },
+  { key: "gcp", label: "Public Cloud — GCP", type: "rating" },
+  { key: "azure", label: "Public Cloud — Azure", type: "rating" },
+  { key: "bash", label: "Scripting — BASH", type: "rating" },
+  { key: "python", label: "Scripting — Python", type: "rating" },
+  { key: "git", label: "VCS — GIT", type: "rating" },
+  { key: "k8s", label: "Container Orchestration — K8s", type: "rating" },
+  { key: "helm", label: "HELM", type: "rating" },
+  { key: "kustomize", label: "Kustomize", type: "rating" },
+  { key: "ansible", label: "Config Mgmt — Ansible", type: "rating" },
+  { key: "addlConfigMgmt", label: "Additional Config Mgmt Tools", type: "list" },
+  { key: "terraform", label: "IaC — Terraform", type: "rating" },
+  { key: "addlIac", label: "Additional IaC Tools", type: "list" },
+  { key: "jenkins", label: "CI/CD — Jenkins", type: "rating" },
+  { key: "argocd", label: "CI/CD — GitOps (ArgoCD)", type: "rating" },
+  { key: "ghactions", label: "CI/CD — GitHub Actions", type: "rating" },
+  { key: "addlCicd", label: "Additional CI/CD Tools", type: "list" },
+  { key: "monitoring", label: "Monitoring — Grafana / Prometheus", type: "rating" },
+  { key: "addlMonitoring", label: "Additional Monitoring Tools", type: "list" },
+  { key: "elk", label: "Logging — ELK", type: "rating" },
+  { key: "addlLogging", label: "Additional Logging Tools", type: "list" },
+  { key: "secrets", label: "Secrets Management Tools", type: "list" },
+  { key: "policyAsCode", label: "Policy as Code Tools", type: "list" },
+  { key: "secops", label: "SecOps Tools", type: "list" },
+];
+
+const RATINGS = ["Beginner", "Intermediate", "Advanced"];
+const RATING_COLOR = { Beginner: T.faint, Intermediate: T.violet, Advanced: T.cyan };
+
+/* ------------------------------------------------------------------ */
+/* Deterministic RNG + mock data generation                            */
+/* ------------------------------------------------------------------ */
+function mulberry32(seed) {
+  return function () {
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const pick = (rng, arr) => arr[Math.floor(rng() * arr.length)];
+const weighted = (rng, opts) => {
+  const total = opts.reduce((s, o) => s + o.w, 0);
+  let r = rng() * total;
+  for (const o of opts) { if ((r -= o.w) <= 0) return o.v; }
+  return opts[opts.length - 1].v;
+};
+
+const DEFAULT_PROJECTS = [
+  "Zenith Retail — Platform Ops",
+  "Orion Health — Cloud Migration",
+  "Vertex Finance — SRE Support",
+  "Internal — Tooling & Automation",
+  "Nimbus Logistics — K8s Rollout",
+  "Falcon Media — CI/CD Revamp",
+];
+
+const CERT_POOL = [
+  "AWS Certified Solutions Architect", "AWS Certified SysOps Administrator",
+  "CKA — Certified Kubernetes Administrator", "CKAD — Kubernetes App Developer",
+  "HashiCorp Certified: Terraform Associate", "Google Professional Cloud Architect",
+  "Microsoft Azure Administrator (AZ-104)", "Red Hat Certified Engineer (RHCE)",
+  "Certified Ansible Automation Engineer", "Jenkins Certified Engineer",
+  "CompTIA Linux+", "CKS — Certified Kubernetes Security Specialist",
+];
+
+const NAMES = [
+  { name: "Arjun Mehta", role: "Senior DevOps Engineer" },
+  { name: "Priya Nair", role: "DevOps Engineer" },
+  { name: "Rahul Verma", role: "Cloud Engineer" },
+  { name: "Sneha Iyer", role: "Site Reliability Engineer" },
+  { name: "Karthik Suresh", role: "DevOps Engineer" },
+  { name: "Ananya Das", role: "Junior DevOps Engineer" },
+  { name: "Vikram Rao", role: "Lead DevOps Engineer" },
+  { name: "Meera Pillai", role: "Cloud Engineer" },
+];
+function initials(name) {
+  return name.split(" ").map((p) => p[0]).join("").slice(0, 2).toUpperCase();
+}
+
+function genSkills(rng, seniorityBias) {
+  const s = {};
+  for (const item of SKILL_CHECKLIST) {
+    if (item.type === "years") {
+      s[item.key] = item.key === "totalIt"
+        ? Math.max(1, Math.round((rng() * 10 + seniorityBias) * 10) / 10)
+        : Math.max(0, Math.round((rng() * 4 + seniorityBias * 0.4) * 10) / 10);
+    } else if (item.type === "rating") {
+      s[item.key] = weighted(rng, [
+        { v: "Beginner", w: 3 - seniorityBias * 0.3 },
+        { v: "Intermediate", w: 4 },
+        { v: "Advanced", w: 1 + seniorityBias * 0.6 },
+      ]);
+    } else {
+      const pool = {
+        addlConfigMgmt: ["Chef", "Puppet", "SaltStack"],
+        addlIac: ["Pulumi", "CloudFormation", "Crossplane"],
+        addlCicd: ["GitLab CI", "CircleCI", "Argo Workflows", "Spinnaker"],
+        addlMonitoring: ["Datadog", "New Relic", "Zabbix", "Nagios"],
+        addlLogging: ["Loki", "Fluentd", "Splunk"],
+        secrets: ["HashiCorp Vault", "AWS Secrets Manager", "Sealed Secrets"],
+        policyAsCode: ["OPA / Gatekeeper", "Kyverno"],
+        secops: ["Trivy", "SonarQube", "Clair", "Snyk"],
+      }[item.key] || [];
+      const n = Math.floor(rng() * 3);
+      const shuffled = [...pool].sort(() => rng() - 0.5);
+      s[item.key] = shuffled.slice(0, n);
+    }
+  }
+  return s;
+}
+
+function toKey(d) {
+  return d.toISOString().slice(0, 10);
+}
+function fmtLong(d) {
+  return d.toLocaleDateString("en-US", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+}
+function isWeekend(d) {
+  const day = d.getDay();
+  return day === 0 || day === 6;
+}
+
+function buildMembers() {
+  return NAMES.map((n, idx) => {
+    const rng = mulberry32(1000 + idx * 97);
+    const seniority = n.role.includes("Senior") || n.role.includes("Lead") ? 4
+      : n.role.includes("Junior") ? 0.5 : 2;
+    return {
+      id: `m${idx + 1}`,
+      name: n.name,
+      role: n.role,
+      color: AVATAR_COLORS[idx % AVATAR_COLORS.length],
+      skills: genSkills(rng, seniority),
+      certifications: (() => {
+        const shuffled = [...CERT_POOL].sort(() => rng() - 0.5);
+        return shuffled.slice(0, Math.floor(rng() * 3) + (seniority > 2 ? 2 : 0));
+      })(),
+    };
+  });
+}
+
+function buildHistory(members) {
+  const today = new Date();
+  const start = new Date(today);
+  start.setDate(start.getDate() - 70);
+  const records = {}; // date -> memberId -> record
+  const dates = [];
+
+  members.forEach((m, idx) => {
+    const rng = mulberry32(5000 + idx * 331);
+    let monthKey = null;
+    let wfhCount = 0;
+    const cursor = new Date(start);
+    while (cursor <= today) {
+      if (!isWeekend(cursor)) {
+        const dKey = toKey(cursor);
+        const mk = `${cursor.getFullYear()}-${cursor.getMonth()}`;
+        if (mk !== monthKey) { monthKey = mk; wfhCount = 0; }
+
+        const loggedIn = rng() < 0.94;
+        let location = "Office";
+        if (loggedIn && wfhCount < 3 && rng() < 0.32) {
+          location = "WFH";
+          wfhCount += 1;
+        }
+        const allocation = weighted(rng, [
+          { v: "Full", w: 6 }, { v: "Half", w: 2.5 }, { v: "Bench", w: 1.5 },
+        ]);
+        const project = allocation === "Bench" ? null : pick(rng, DEFAULT_PROJECTS);
+
+        if (!records[dKey]) records[dKey] = {};
+        records[dKey][m.id] = { loggedIn, location, allocation, project };
+        if (idx === 0) dates.push(dKey);
+      }
+      cursor.setDate(cursor.getDate() + 1);
+    }
+  });
+  return { records, dates };
+}
+
+/* ------------------------------------------------------------------ */
+/* Small UI atoms                                                      */
+/* ------------------------------------------------------------------ */
+function Badge({ children, color, dim, dot = true }) {
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6,
+      padding: "4px 10px 4px 8px", borderRadius: 999, fontSize: 12, fontWeight: 600,
+      fontFamily: FONT_SANS, color, background: dim, whiteSpace: "nowrap",
+    }}>
+      {dot && <span style={{ width: 6, height: 6, borderRadius: "50%", background: color, flexShrink: 0 }} />}
+      {children}
+    </span>
+  );
+}
+
+function AllocationBadge({ v }) {
+  if (v === "Full") return <Badge color={T.cyan} dim={T.cyanDim}>Full · 8h</Badge>;
+  if (v === "Half") return <Badge color={T.violet} dim={T.violetDim}>Half · 4h</Badge>;
+  return <Badge color={T.amber} dim={T.amberDim}>Bench</Badge>;
+}
+function LocationBadge({ v }) {
+  return v === "WFH"
+    ? <Badge color={T.violet} dim={T.violetDim}>WFH</Badge>
+    : <Badge color={T.muted} dim="rgba(102,112,133,0.08)">Office</Badge>;
+}
+function LoginBadge({ v }) {
+  if (v === "Present") return <Badge color={T.green} dim={T.greenDim}>Present</Badge>;
+  if (v === "Half day leave") return <Badge color={T.amber} dim={T.amberDim}>Half day leave</Badge>;
+  return <Badge color={T.rose} dim={T.roseDim}>Leave</Badge>;
+}
+function RatingPill({ v }) {
+  const c = RATING_COLOR[v];
+  return (
+    <span style={{
+      display: "inline-flex", alignItems: "center", gap: 6, fontFamily: FONT_SANS,
+      fontSize: 12.5, fontWeight: 600, color: c,
+    }}>
+      <span style={{ display: "flex", gap: 3 }}>
+        {RATINGS.map((r, i) => (
+          <span key={r} style={{
+            width: 14, height: 5, borderRadius: 3,
+            background: RATINGS.indexOf(v) >= i ? c : T.border,
+          }} />
+        ))}
+      </span>
+      {v}
+    </span>
+  );
+}
+
+function Avatar({ name, color, size = 36 }) {
+  return (
+    <div style={{
+      width: size, height: size, borderRadius: size * 0.28, background: `${color}17`,
+      color, display: "flex", alignItems: "center",
+      justifyContent: "center", fontFamily: FONT_SANS, fontWeight: 700,
+      fontSize: size * 0.36, flexShrink: 0, letterSpacing: -0.2,
+    }}>{initials(name)}</div>
+  );
+}
+
+function Card({ children, style, title, right }) {
+  return (
+    <div style={{
+      background: T.panel, border: `1px solid ${T.border}`, borderRadius: 12,
+      padding: 20, boxShadow: T.shadowSm, ...style,
+    }}>
+      {(title || right) && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
+          {title && <h3 style={{
+            margin: 0, fontSize: 12.5, letterSpacing: 0.3,
+            color: T.text, fontFamily: FONT_SANS, fontWeight: 600,
+          }}>{title}</h3>}
+          {right}
+        </div>
+      )}
+      {children}
+    </div>
+  );
+}
+
+
+/* ------------------------------------------------------------------ */
+/* Pie chart card                                                      */
+/* ------------------------------------------------------------------ */
+function StatPie({ title, data, colors }) {
+  const total = data.reduce((s, d) => s + d.value, 0);
+  return (
+    <Card title={title}>
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{ width: 116, height: 116, flexShrink: 0, position: "relative" }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={data} dataKey="value" nameKey="name" innerRadius={40} outerRadius={56} paddingAngle={2} stroke="none" cornerRadius={3}>
+                {data.map((d, i) => <Cell key={i} fill={colors[i % colors.length]} />)}
+              </Pie>
+              <Tooltip contentStyle={{
+                background: T.panel, border: `1px solid ${T.border}`, borderRadius: 8, boxShadow: T.shadowMd,
+                fontFamily: FONT_SANS, fontSize: 12, color: T.text,
+              }} />
+            </PieChart>
+          </ResponsiveContainer>
+          <div style={{
+            position: "absolute", inset: 0, display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center", pointerEvents: "none",
+          }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color: T.text, fontFamily: FONT_SANS }}>{total}</div>
+            <div style={{ fontSize: 9.5, color: T.faint, textTransform: "uppercase", letterSpacing: 0.3 }}>total</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 9, flex: 1 }}>
+          {data.map((d, i) => (
+            <div key={d.name} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 13 }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 8, color: T.text, fontWeight: 500 }}>
+                <span style={{ width: 8, height: 8, borderRadius: "50%", background: colors[i % colors.length], flexShrink: 0 }} />
+                {d.name}
+              </span>
+              <span style={{ fontFamily: FONT_MONO, color: T.muted, fontSize: 12.5 }}>
+                <span style={{ color: T.text, fontWeight: 600 }}>{d.value}</span>{" "}
+                <span style={{ color: T.faint }}>({total ? Math.round((d.value / total) * 100) : 0}%)</span>
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Shared form controls                                                */
+/* ------------------------------------------------------------------ */
+function ToggleGroup({ value, onChange, options }) {
+  return (
+    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+      {options.map((o) => {
+        const active = o.v === value;
+        return (
+          <button key={String(o.v)} disabled={o.disabled} onClick={() => onChange(o.v)} style={{
+            padding: "7px 13px", borderRadius: 7, fontSize: 12.5, fontFamily: FONT_SANS,
+            fontWeight: 600, cursor: o.disabled ? "not-allowed" : "pointer",
+            background: active ? T.cyan : T.panel2,
+            border: `1px solid ${active ? T.cyan : T.border}`,
+            color: o.disabled ? T.faint : active ? "#FFFFFF" : T.text, opacity: o.disabled ? 0.5 : 1,
+            transition: "background 0.12s, border-color 0.12s",
+          }}>{o.l}</button>
+        );
+      })}
+    </div>
+  );
+}
+const selectStyle = {
+  width: "100%", padding: "9px 11px", borderRadius: 8, background: T.panel,
+  border: `1px solid ${T.border}`, color: T.text, fontFamily: FONT_SANS, fontSize: 13,
+};
+const iconBtnStyle = {
+  background: "transparent", border: `1px solid ${T.border}`, borderRadius: 7,
+  color: T.muted, width: 30, height: 30, display: "flex", alignItems: "center",
+  justifyContent: "center", cursor: "pointer",
+};
+const primaryBtnStyle = {
+  flex: 1, padding: "10px 16px", borderRadius: 8, background: T.cyan, color: "#FFFFFF",
+  border: "none", fontWeight: 600, fontSize: 13, cursor: "pointer", fontFamily: FONT_SANS,
+  boxShadow: "0 1px 2px rgba(79,70,229,0.24)",
+};
+const secondaryBtnStyle = {
+  flex: 1, padding: "10px 16px", borderRadius: 8, background: T.panel, color: T.text,
+  border: `1px solid ${T.border}`, fontWeight: 600, fontSize: 13, cursor: "pointer", fontFamily: FONT_SANS,
+};
+
+/* ------------------------------------------------------------------ */
+/* Date navigator                                                      */
+/* ------------------------------------------------------------------ */
+function DateNav({ date, onChange, dates }) {
+  const idx = dates.indexOf(toKey(date));
+  const go = (delta) => {
+    const newIdx = idx + delta;
+    if (newIdx >= 0 && newIdx < dates.length) onChange(new Date(dates[newIdx] + "T00:00:00"));
+  };
+  return (
+    <div style={{
+      display: "flex", alignItems: "center", gap: 14, background: T.panel,
+      border: `1px solid ${T.border}`, borderRadius: 12, padding: "14px 18px", boxShadow: T.shadowSm,
+    }}>
+      <button onClick={() => go(-1)} disabled={idx <= 0} style={{ ...iconBtnStyle, opacity: idx <= 0 ? 0.35 : 1 }}><ChevronLeft size={16} /></button>
+      <div style={{ minWidth: 220, textAlign: "center" }}>
+        <div style={{ fontFamily: FONT_SANS, fontSize: 15.5, fontWeight: 700, color: T.text, letterSpacing: -0.1 }}>
+          {fmtLong(date)}
+        </div>
+        <div style={{ fontSize: 10, color: T.faint, fontFamily: FONT_SANS, fontWeight: 600, letterSpacing: 0.6, marginTop: 2, textTransform: "uppercase" }}>Day · Date · Year</div>
+      </div>
+      <button onClick={() => go(1)} disabled={idx < 0 || idx >= dates.length - 1} style={{ ...iconBtnStyle, opacity: (idx < 0 || idx >= dates.length - 1) ? 0.35 : 1 }}><ChevronRight size={16} /></button>
+      <div style={{ width: 1, alignSelf: "stretch", background: T.border, margin: "0 2px" }} />
+      <input
+        type="date"
+        value={toKey(date)}
+        min={dates[0]} max={dates[dates.length - 1]}
+        onChange={(e) => { if (e.target.value) onChange(new Date(e.target.value + "T00:00:00")); }}
+        style={{
+          background: T.panel2, border: `1px solid ${T.border}`, borderRadius: 7,
+          color: T.text, fontFamily: FONT_SANS, fontSize: 12.5, padding: "8px 10px", colorScheme: "light",
+        }}
+      />
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Dashboard view                                                      */
+/* ------------------------------------------------------------------ */
+function monthWfhUsed(records, dates, memberId, refDateKey) {
+  const ref = new Date(refDateKey + "T00:00:00");
+  let count = 0;
+  for (const dKey of dates) {
+    const d = new Date(dKey + "T00:00:00");
+    if (d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth() && d <= ref) {
+      const rec = records[dKey]?.[memberId];
+      if (rec?.location === "WFH") count += 1;
+    }
+  }
+  return count;
+}
+
+function Dashboard({ members, records, dates, date, setDate, onOpenProfile, onUpdateRecord, projectList, onAddProject }) {
+  const dKey = toKey(date);
+  const dayRecords = records[dKey];
+
+  if (!dayRecords) {
+    return (
+      <div>
+        <DateNav date={date} onChange={setDate} dates={dates} />
+        <Card style={{ marginTop: 16, textAlign: "center", padding: 40 }}>
+          <div style={{ color: T.muted, fontFamily: FONT_MONO, fontSize: 13 }}>
+            No workday data for this date — the team is off (weekend). Pick a weekday to view attendance.
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  const rows = members.map((m) => ({ member: m, rec: dayRecords[m.id] }));
+  const loginData = [
+    { name: "Logged in", value: rows.filter((r) => r.rec.loggedIn).length },
+    { name: "Not logged", value: rows.filter((r) => !r.rec.loggedIn).length },
+  ];
+  const locData = [
+    { name: "Office", value: rows.filter((r) => r.rec.location === "Office").length },
+    { name: "WFH", value: rows.filter((r) => r.rec.location === "WFH").length },
+  ];
+  const allocData = [
+    { name: "Full · 8h", value: rows.filter((r) => r.rec.allocation === "Full").length },
+    { name: "Half · 4h", value: rows.filter((r) => r.rec.allocation === "Half").length },
+    { name: "Bench", value: rows.filter((r) => r.rec.allocation === "Bench").length },
+  ];
+
+  return (
+    <div>
+      <DateNav date={date} onChange={setDate} dates={dates} />
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 14, margin: "16px 0" }}>
+        <StatPie title="Login status" data={loginData} colors={[T.green, T.rose]} />
+        <StatPie title="Work location" data={locData} colors={[T.muted, T.violet]} />
+        <StatPie title="Project allocation" data={allocData} colors={[T.cyan, T.violet, T.amber]} />
+      </div>
+
+      <Card title="Team snapshot" right={<span style={{ fontSize: 12, color: T.faint, fontFamily: FONT_SANS, fontWeight: 500 }}>{rows.length} members · editable</span>}>
+        <div style={{ overflowX: "auto", margin: "0 -20px", padding: "0 20px" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <thead>
+              <tr style={{
+                textAlign: "left", color: T.faint, fontFamily: FONT_SANS, fontSize: 11, fontWeight: 600,
+                textTransform: "uppercase", letterSpacing: 0.5,
+              }}>
+                <th style={thStyle}>Member</th>
+                <th style={thStyle}>Login</th>
+                <th style={thStyle}>Location</th>
+                <th style={thStyle}>Allocation</th>
+                <th style={thStyle}>Project</th>
+                <th style={thStyle}>WFH quota</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map(({ member, rec }) => {
+                const used = monthWfhUsed(records, dates, member.id, dKey);
+                const wfhBlocked = rec.location !== "WFH" && used >= 3;
+                const setField = (field, value) => onUpdateRecord(member.id, field, value);
+                return (
+                  <tr key={member.id} style={{ borderTop: `1px solid ${T.border}` }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = T.panel2}
+                    onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}
+                  >
+                    <td style={tdStyle}>
+                      <button onClick={() => onOpenProfile(member.id)} style={{
+                        display: "flex", alignItems: "center", gap: 10, background: "none",
+                        border: "none", cursor: "pointer", padding: "10px 0", textAlign: "left",
+                      }}>
+                        <Avatar name={member.name} color={member.color} size={32} />
+                        <div>
+                          <div style={{ color: T.text, fontWeight: 600, fontSize: 13.5 }}>{member.name}</div>
+                          <div style={{ color: T.faint, fontSize: 11.5 }}>{member.role}</div>
+                        </div>
+                      </button>
+                    </td>
+                    <td style={tdStyle}>
+                      <StatusSelect
+                        value={rec.loggedIn}
+                        onChange={(v) => setField("loggedIn", v)}
+                        options={[
+                          { v: "Present", l: "Present" },
+                          { v: "Half day leave", l: "Half day leave" },
+                          { v: "Leave", l: "Leave" }
+                        ]}
+                        tone={rec.loggedIn === "Present" ? T.green : rec.loggedIn === "Half day leave" ? T.amber : T.rose}
+                      />
+                    </td>
+                    <td style={tdStyle}>
+                      <StatusSelect
+                        value={rec.location}
+                        onChange={(v) => setField("location", v)}
+                        options={[
+                          { v: "Office", l: "Office" },
+                          { v: "WFH", l: wfhBlocked ? "WFH (quota reached)" : "WFH", disabled: wfhBlocked },
+                        ]}
+                        tone={rec.location === "WFH" ? T.violet : T.muted}
+                      />
+                    </td>
+                    <td style={tdStyle}>
+                      <StatusSelect
+                        value={rec.allocation}
+                        onChange={(v) => {
+                          if (v === "Bench") { setField("allocation", "Bench"); setField("project", null); }
+                          else if (!rec.project) { setField("allocation", v); setField("project", projectList[0]); }
+                          else setField("allocation", v);
+                        }}
+                        options={[{ v: "Full", l: "Full · 8h" }, { v: "Half", l: "Half · 4h" }, { v: "Bench", l: "Bench" }]}
+                        tone={rec.allocation === "Full" ? T.cyan : rec.allocation === "Half" ? T.violet : T.amber}
+                      />
+                    </td>
+                    <td style={{ ...tdStyle, minWidth: 200 }}>
+                      {rec.allocation === "Bench" ? (
+                        <span style={{ color: T.faint, fontSize: 12.5 }}>—</span>
+                      ) : (
+                        <ProjectSelect
+                          value={rec.project}
+                          projects={projectList}
+                          onSelect={(v) => setField("project", v)}
+                          onAddProject={onAddProject}
+                        />
+                      )}
+                    </td>
+                    <td style={tdStyle}>
+                      <QuotaBar used={used} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+}
+const thStyle = { padding: "0 16px 10px 0" };
+const tdStyle = { padding: "8px 16px 8px 0", verticalAlign: "middle" };
+
+/* Compact inline dropdown used directly in the team snapshot row */
+function StatusSelect({ value, onChange, options, tone }) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{
+        padding: "6px 26px 6px 10px", borderRadius: 999, background: `${tone}12`,
+        border: `1px solid ${tone}30`, color: tone, fontFamily: FONT_SANS, fontWeight: 600,
+        fontSize: 12, cursor: "pointer", appearance: "none", WebkitAppearance: "none",
+        backgroundImage:
+          `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='${encodeURIComponent(tone)}'/></svg>")`,
+        backgroundRepeat: "no-repeat", backgroundPosition: "right 9px center",
+      }}
+    >
+      {options.map((o) => (
+        <option key={String(o.v)} value={o.v} disabled={o.disabled}>{o.l}</option>
+      ))}
+    </select>
+  );
+}
+
+/* Project dropdown with an inline "add new project" affordance */
+function ProjectSelect({ value, projects, onSelect, onAddProject }) {
+  const [adding, setAdding] = useState(false);
+  const [draft, setDraft] = useState("");
+
+  if (adding) {
+    return (
+      <div style={{ display: "flex", gap: 5 }}>
+        <input
+          autoFocus value={draft} onChange={(e) => setDraft(e.target.value)}
+          placeholder="New project name…"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              const v = draft.trim();
+              if (v) { onAddProject(v); onSelect(v); }
+              setAdding(false); setDraft("");
+            } else if (e.key === "Escape") { setAdding(false); setDraft(""); }
+          }}
+          style={{ ...selectStyle, padding: "6px 10px", fontSize: 12.5, width: 160 }}
+        />
+        <button onClick={() => {
+          const v = draft.trim();
+          if (v) { onAddProject(v); onSelect(v); }
+          setAdding(false); setDraft("");
+        }} style={{
+          padding: "6px 11px", borderRadius: 7, background: T.cyanDim, border: `1px solid ${T.cyan}40`,
+          color: T.cyan, fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: FONT_SANS, flexShrink: 0,
+        }}>Add</button>
+        <button onClick={() => { setAdding(false); setDraft(""); }} style={{ ...iconBtnStyle, flexShrink: 0 }}><X size={13} /></button>
+      </div>
+    );
+  }
+
+  return (
+    <select
+      value={value || ""}
+      onChange={(e) => {
+        if (e.target.value === "__add__") setAdding(true);
+        else onSelect(e.target.value);
+      }}
+      style={{
+        ...selectStyle, padding: "7px 28px 7px 11px", fontSize: 12.5, width: "100%", maxWidth: 230,
+        appearance: "none", WebkitAppearance: "none",
+        backgroundImage:
+          `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='${encodeURIComponent(T.faint)}'/></svg>")`,
+        backgroundRepeat: "no-repeat", backgroundPosition: "right 10px center",
+      }}
+    >
+      {!projects.includes(value) && value && <option value={value}>{value}</option>}
+      {projects.map((p) => <option key={p} value={p}>{p}</option>)}
+      <option value="__add__">+ Add new project…</option>
+    </select>
+  );
+}
+
+function QuotaBar({ used }) {
+  const color = used >= 3 ? T.rose : used === 2 ? T.amber : T.cyan;
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+      <div style={{ display: "flex", gap: 3 }}>
+        {[0, 1, 2].map((i) => (
+          <span key={i} style={{ width: 14, height: 6, borderRadius: 3, background: i < used ? color : T.border }} />
+        ))}
+      </div>
+      <span style={{ fontFamily: FONT_MONO, fontSize: 11.5, color: T.muted, fontWeight: 600 }}>{used}/3</span>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Team directory view                                                 */
+/* ------------------------------------------------------------------ */
+function TeamDirectory({ members, records, dates, date, onOpenProfile }) {
+  const dKey = toKey(date);
+  const [q, setQ] = useState("");
+  const filtered = members.filter((m) => m.name.toLowerCase().includes(q.toLowerCase()) || m.role.toLowerCase().includes(q.toLowerCase()));
+  return (
+    <div>
+      <div style={{ display: "flex", gap: 10, marginBottom: 18, alignItems: "center" }}>
+        <div style={{ position: "relative", flex: 1, maxWidth: 320 }}>
+          <Search size={14} style={{ position: "absolute", left: 12, top: 11, color: T.faint }} />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search team members…" style={{
+            width: "100%", padding: "9px 12px 9px 34px", borderRadius: 8, background: T.panel,
+            border: `1px solid ${T.border}`, color: T.text, fontFamily: FONT_SANS, fontSize: 13, boxShadow: T.shadowSm,
+          }} />
+        </div>
+        <span style={{ fontSize: 12, color: T.muted, fontFamily: FONT_SANS, fontWeight: 500 }}>Snapshot for {fmtLong(date)}</span>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 14 }}>
+        {filtered.map((m) => {
+          const rec = records[dKey]?.[m.id];
+          const used = monthWfhUsed(records, dates, m.id, dKey);
+          return (
+            <button key={m.id} onClick={() => onOpenProfile(m.id)} style={{
+              textAlign: "left", background: T.panel, border: `1px solid ${T.border}`, borderRadius: 12,
+              padding: 18, cursor: "pointer", color: "inherit", fontFamily: FONT_SANS, boxShadow: T.shadowSm,
+              transition: "box-shadow 0.15s, border-color 0.15s",
+            }}
+              onMouseEnter={(e) => { e.currentTarget.style.boxShadow = T.shadowMd; e.currentTarget.style.borderColor = T.borderLight; }}
+              onMouseLeave={(e) => { e.currentTarget.style.boxShadow = T.shadowSm; e.currentTarget.style.borderColor = T.border; }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+                <Avatar name={m.name} color={m.color} size={44} />
+                <div>
+                  <div style={{ fontWeight: 700, fontSize: 14.5, color: T.text }}>{m.name}</div>
+                  <div style={{ fontSize: 12, color: T.muted, marginTop: 1 }}>{m.role}</div>
+                </div>
+              </div>
+              {rec ? (
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  <LoginBadge v={rec.loggedIn} />
+                  <LocationBadge v={rec.location} />
+                  <AllocationBadge v={rec.allocation} />
+                </div>
+              ) : <div style={{ fontSize: 12, color: T.faint }}>Weekend — no data</div>}
+              <div style={{ marginTop: 14, paddingTop: 12, borderTop: `1px solid ${T.border}`, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <span style={{ fontSize: 10.5, color: T.faint, fontFamily: FONT_SANS, fontWeight: 600, textTransform: "uppercase", letterSpacing: 0.4 }}>WFH this month</span>
+                <QuotaBar used={used} />
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* Member profile view                                                 */
+/* ------------------------------------------------------------------ */
+function MemberProfile({ member, records, dates, onBack, onSaveProfile }) {
+  const [tab, setTab] = useState("overview");
+  const [editing, setEditing] = useState(false);
+  const [draftSkills, setDraftSkills] = useState(member.skills);
+  const [draftCerts, setDraftCerts] = useState(member.certifications);
+  const history = dates.map((dKey) => ({ dKey, rec: records[dKey]?.[member.id] })).filter((r) => r.rec).reverse();
+
+  const monthlyWfh = useMemo(() => {
+    const map = {};
+    for (const dKey of dates) {
+      const rec = records[dKey]?.[member.id];
+      if (!rec) continue;
+      const d = new Date(dKey + "T00:00:00");
+      const mk = d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+      map[mk] = map[mk] || 0;
+      if (rec.location === "WFH") map[mk] += 1;
+    }
+    return Object.entries(map).map(([name, wfh]) => ({ name, wfh, quota: 3 }));
+  }, [records, dates, member.id]);
+
+  const startEdit = () => { setDraftSkills(member.skills); setDraftCerts(member.certifications); setEditing(true); };
+  const cancelEdit = () => setEditing(false);
+  const saveEdit = () => { onSaveProfile(draftSkills, draftCerts); setEditing(false); };
+
+  return (
+    <div>
+      <button onClick={onBack} style={{
+        display: "flex", alignItems: "center", gap: 6, background: "none", border: "none",
+        color: T.muted, fontSize: 12.5, cursor: "pointer", marginBottom: 18, fontFamily: FONT_SANS, padding: 0, fontWeight: 500,
+      }}><ArrowLeft size={14} /> Back to team</button>
+
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 22 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <Avatar name={member.name} color={member.color} size={58} />
+          <div>
+            <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, letterSpacing: -0.2, color: T.text }}>{member.name}</h2>
+            <div style={{ color: T.muted, fontSize: 13, marginTop: 2 }}>{member.role}</div>
+          </div>
+        </div>
+        {tab === "overview" && (
+          editing ? (
+            <div style={{ display: "flex", gap: 8 }}>
+              <button onClick={cancelEdit} style={{ ...secondaryBtnStyle, flex: "none", padding: "9px 16px" }}>Cancel</button>
+              <button onClick={saveEdit} style={{ ...primaryBtnStyle, flex: "none", padding: "9px 16px" }}>Save changes</button>
+            </div>
+          ) : (
+            <button onClick={startEdit} style={{
+              display: "flex", alignItems: "center", gap: 7, padding: "9px 16px", borderRadius: 8,
+              background: T.panel, border: `1px solid ${T.border}`, color: T.text, fontWeight: 600,
+              fontSize: 13, cursor: "pointer", fontFamily: FONT_SANS, boxShadow: T.shadowSm,
+            }}><Pencil size={13} /> Edit skills & certifications</button>
+          )
+        )}
+      </div>
+
+      <div style={{ display: "flex", gap: 6, marginBottom: 20, borderBottom: `1px solid ${T.border}` }}>
+        {[["overview", "Skills & certifications"], ["history", "Attendance history"]].map(([k, l]) => (
+          <button key={k} onClick={() => { if (!editing) setTab(k); }} disabled={editing} style={{
+            background: "none", border: "none", cursor: editing ? "not-allowed" : "pointer", padding: "10px 6px",
+            fontFamily: FONT_SANS, fontSize: 13.5, fontWeight: 600,
+            color: editing && tab !== k ? T.faint : tab === k ? T.cyan : T.muted,
+            borderBottom: tab === k ? `2px solid ${T.cyan}` : "2px solid transparent",
+            marginBottom: -1,
+          }}>{l}</button>
+        ))}
+      </div>
+
+      {tab === "overview" ? (
+        <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: 16 }}>
+          <Card title="Skill checklist">
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {SKILL_CHECKLIST.map((item) => (
+                <div key={item.key} style={{
+                  display: "flex", justifyContent: "space-between", alignItems: "center",
+                  padding: "12px 0", borderBottom: `1px solid ${T.border}`, gap: 14,
+                }}>
+                  <span style={{ fontSize: 13, color: T.text, flexShrink: 0, fontWeight: 500 }}>{item.label}</span>
+
+                  {item.type === "rating" && (
+                    editing ? (
+                      <ToggleGroup
+                        value={draftSkills[item.key]}
+                        onChange={(v) => setDraftSkills({ ...draftSkills, [item.key]: v })}
+                        options={RATINGS.map((r) => ({ v: r, l: r }))}
+                      />
+                    ) : <RatingPill v={member.skills[item.key]} />
+                  )}
+
+                  {item.type === "years" && (
+                    editing ? (
+                      <input
+                        type="number" min="0" step="0.5" value={draftSkills[item.key]}
+                        onChange={(e) => setDraftSkills({ ...draftSkills, [item.key]: parseFloat(e.target.value) || 0 })}
+                        style={{ ...selectStyle, width: 90, textAlign: "right", fontFamily: FONT_MONO }}
+                      />
+                    ) : (
+                      <span style={{ fontFamily: FONT_MONO, fontSize: 12.5, color: T.cyan, fontWeight: 700 }}>
+                        {member.skills[item.key]} yrs
+                      </span>
+                    )
+                  )}
+
+                  {item.type === "list" && (
+                    editing
+                      ? <TagEditor value={draftSkills[item.key]} onChange={(v) => setDraftSkills({ ...draftSkills, [item.key]: v })} />
+                      : (
+                        <div style={{ display: "flex", gap: 5, flexWrap: "wrap", justifyContent: "flex-end", maxWidth: 240 }}>
+                          {member.skills[item.key].length
+                            ? member.skills[item.key].map((t) => (
+                              <span key={t} style={{
+                                fontSize: 10.5, color: T.muted, border: `1px solid ${T.border}`,
+                                borderRadius: 4, padding: "2px 6px", fontFamily: FONT_MONO,
+                              }}>{t}</span>
+                            ))
+                            : <span style={{ fontSize: 12, color: T.faint }}>—</span>}
+                        </div>
+                      )
+                  )}
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card title="Certifications" right={<Award size={14} color={T.muted} />}>
+            {editing ? (
+              <CertEditor value={draftCerts} onChange={setDraftCerts} />
+            ) : member.certifications.length ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                {member.certifications.map((c) => (
+                  <div key={c} style={{
+                    display: "flex", alignItems: "center", gap: 9, padding: "9px 10px",
+                    background: T.panel2, border: `1px solid ${T.border}`, borderRadius: 7, fontSize: 12.5,
+                  }}>
+                    <Award size={14} color={T.amber} style={{ flexShrink: 0 }} />
+                    {c}
+                  </div>
+                ))}
+              </div>
+            ) : <div style={{ color: T.faint, fontSize: 12.5 }}>No certifications on file.</div>}
+          </Card>
+        </div>
+      ) : (
+        <div>
+          <Card title="Monthly WFH quota usage" style={{ marginBottom: 14 }}>
+            <div style={{ width: "100%", height: 180 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={monthlyWfh}>
+                  <CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false} />
+                  <XAxis dataKey="name" stroke={T.faint} fontSize={11} fontFamily={FONT_MONO} tickLine={false} axisLine={{ stroke: T.border }} />
+                  <YAxis stroke={T.faint} fontSize={11} fontFamily={FONT_MONO} tickLine={false} axisLine={false} allowDecimals={false} domain={[0, 3]} />
+                  <Tooltip contentStyle={{ background: T.panel2, border: `1px solid ${T.border}`, borderRadius: 6, fontFamily: FONT_SANS, fontSize: 12 }} />
+                  <Bar dataKey="wfh" fill={T.violet} radius={[4, 4, 0, 0]} name="WFH days used" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </Card>
+
+          <Card title={`Attendance log (${history.length} workdays)`}>
+            <div style={{ maxHeight: 420, overflowY: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+                <thead>
+                  <tr style={{ textAlign: "left", color: T.muted, fontFamily: FONT_MONO, fontSize: 10.5, textTransform: "uppercase" }}>
+                    <th style={thStyle}>Date</th>
+                    <th style={thStyle}>Login</th>
+                    <th style={thStyle}>Location</th>
+                    <th style={thStyle}>Allocation</th>
+                    <th style={thStyle}>Project</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {history.map(({ dKey, rec }) => (
+                    <tr key={dKey} style={{ borderTop: `1px solid ${T.border}` }}>
+                      <td style={{ ...tdStyle, fontFamily: FONT_MONO, color: T.text, whiteSpace: "nowrap" }}>
+                        {new Date(dKey + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", day: "2-digit", month: "short", year: "numeric" })}
+                      </td>
+                      <td style={tdStyle}><LoginBadge v={rec.loggedIn} /></td>
+                      <td style={tdStyle}><LocationBadge v={rec.location} /></td>
+                      <td style={tdStyle}><AllocationBadge v={rec.allocation} /></td>
+                      <td style={{ ...tdStyle, color: rec.project ? T.text : T.faint }}>{rec.project || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* Add/remove chip editor for free-text skill-tool lists */
+function TagEditor({ value, onChange }) {
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    const v = draft.trim();
+    if (v && !value.includes(v)) onChange([...value, v]);
+    setDraft("");
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end", maxWidth: 260 }}>
+      <div style={{ display: "flex", gap: 5, flexWrap: "wrap", justifyContent: "flex-end" }}>
+        {value.map((t) => (
+          <span key={t} style={{
+            display: "flex", alignItems: "center", gap: 4, fontSize: 10.5, color: T.text,
+            border: `1px solid ${T.border}`, background: T.panel2, borderRadius: 4,
+            padding: "2px 4px 2px 7px", fontFamily: FONT_MONO,
+          }}>
+            {t}
+            <button onClick={() => onChange(value.filter((x) => x !== t))} style={{
+              background: "none", border: "none", cursor: "pointer", color: T.faint, display: "flex", padding: 2,
+            }}><X size={10} /></button>
+          </span>
+        ))}
+      </div>
+      <div style={{ display: "flex", gap: 5 }}>
+        <input
+          value={draft} onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
+          placeholder="Add tool…" style={{ ...selectStyle, width: 130, padding: "5px 8px", fontSize: 11.5 }}
+        />
+        <button onClick={add} style={{
+          padding: "5px 10px", borderRadius: 6, background: T.cyanDim, border: `1px solid ${T.cyan}55`,
+          color: T.cyan, fontSize: 11.5, fontWeight: 700, cursor: "pointer", fontFamily: FONT_SANS,
+        }}>Add</button>
+      </div>
+    </div>
+  );
+}
+
+/* Add/remove editor for certifications, with suggestions from the common pool */
+function CertEditor({ value, onChange }) {
+  const [draft, setDraft] = useState("");
+  const add = () => {
+    const v = draft.trim();
+    if (v && !value.includes(v)) onChange([...value, v]);
+    setDraft("");
+  };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      {value.map((c) => (
+        <div key={c} style={{
+          display: "flex", alignItems: "center", gap: 9, padding: "8px 9px 8px 10px",
+          background: T.panel2, border: `1px solid ${T.border}`, borderRadius: 7, fontSize: 12.5,
+        }}>
+          <Award size={14} color={T.amber} style={{ flexShrink: 0 }} />
+          <span style={{ flex: 1 }}>{c}</span>
+          <button onClick={() => onChange(value.filter((x) => x !== c))} style={{
+            background: "none", border: "none", cursor: "pointer", color: T.faint, display: "flex",
+          }}><X size={13} /></button>
+        </div>
+      ))}
+      <div style={{ display: "flex", gap: 6 }}>
+        <input
+          value={draft} onChange={(e) => setDraft(e.target.value)} list="cert-suggestions"
+          onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
+          placeholder="Add certification…" style={{ ...selectStyle, flex: 1, fontSize: 12.5 }}
+        />
+        <datalist id="cert-suggestions">
+          {CERT_POOL.map((c) => <option key={c} value={c} />)}
+        </datalist>
+        <button onClick={add} style={{
+          padding: "9px 12px", borderRadius: 6, background: T.cyanDim, border: `1px solid ${T.cyan}55`,
+          color: T.cyan, fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: FONT_SANS, flexShrink: 0,
+        }}>Add</button>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* History view (per member trend browser)                             */
+/* ------------------------------------------------------------------ */
+function HistoryView({ members, records, dates, onOpenProfile }) {
+  const [memberId, setMemberId] = useState(members[0].id);
+  const member = members.find((m) => m.id === memberId);
+  return (
+    <div>
+      <Card style={{ marginBottom: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <span style={{ fontSize: 12.5, color: T.muted, fontFamily: FONT_SANS, fontWeight: 600 }}>View history for</span>
+          <select value={memberId} onChange={(e) => setMemberId(e.target.value)} style={{ ...selectStyle, width: 240 }}>
+            {members.map((m) => <option key={m.id} value={m.id}>{m.name} — {m.role}</option>)}
+          </select>
+          <button onClick={() => onOpenProfile(memberId)} style={{ ...secondaryBtnStyle, flex: "none", padding: "9px 14px" }}>
+            Open full profile
+          </button>
+        </div>
+      </Card>
+      <MemberProfileHistoryOnly member={member} records={records} dates={dates} />
+    </div>
+  );
+}
+function MemberProfileHistoryOnly({ member, records, dates }) {
+  const history = dates.map((dKey) => ({ dKey, rec: records[dKey]?.[member.id] })).filter((r) => r.rec).reverse();
+  const monthlyWfh = useMemo(() => {
+    const map = {};
+    for (const dKey of dates) {
+      const rec = records[dKey]?.[member.id];
+      if (!rec) continue;
+      const d = new Date(dKey + "T00:00:00");
+      const mk = d.toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+      map[mk] = map[mk] || 0;
+      if (rec.location === "WFH") map[mk] += 1;
+    }
+    return Object.entries(map).map(([name, wfh]) => ({ name, wfh }));
+  }, [records, dates, member.id]);
+
+  return (
+    <div>
+      <Card title="Monthly WFH quota usage" style={{ marginBottom: 14 }}>
+        <div style={{ width: "100%", height: 180 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={monthlyWfh}>
+              <CartesianGrid strokeDasharray="3 3" stroke={T.border} vertical={false} />
+              <XAxis dataKey="name" stroke={T.faint} fontSize={11} fontFamily={FONT_MONO} tickLine={false} axisLine={{ stroke: T.border }} />
+              <YAxis stroke={T.faint} fontSize={11} fontFamily={FONT_MONO} tickLine={false} axisLine={false} allowDecimals={false} domain={[0, 3]} />
+              <Tooltip contentStyle={{ background: T.panel2, border: `1px solid ${T.border}`, borderRadius: 6, fontFamily: FONT_SANS, fontSize: 12 }} />
+              <Bar dataKey="wfh" fill={T.violet} radius={[4, 4, 0, 0]} name="WFH days used" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+      <Card title={`Attendance log (${history.length} workdays)`}>
+        <div style={{ maxHeight: 460, overflowY: "auto" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
+            <thead>
+              <tr style={{ textAlign: "left", color: T.muted, fontFamily: FONT_MONO, fontSize: 10.5, textTransform: "uppercase" }}>
+                <th style={thStyle}>Date</th><th style={thStyle}>Login</th><th style={thStyle}>Location</th>
+                <th style={thStyle}>Allocation</th><th style={thStyle}>Project</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map(({ dKey, rec }) => (
+                <tr key={dKey} style={{ borderTop: `1px solid ${T.border}` }}>
+                  <td style={{ ...tdStyle, fontFamily: FONT_MONO, color: T.text, whiteSpace: "nowrap" }}>
+                    {new Date(dKey + "T00:00:00").toLocaleDateString("en-US", { weekday: "short", day: "2-digit", month: "short", year: "numeric" })}
+                  </td>
+                  <td style={tdStyle}><LoginBadge v={rec.loggedIn} /></td>
+                  <td style={tdStyle}><LocationBadge v={rec.location} /></td>
+                  <td style={tdStyle}><AllocationBadge v={rec.allocation} /></td>
+                  <td style={{ ...tdStyle, color: rec.project ? T.text : T.faint }}>{rec.project || "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/* App shell                                                            */
+/* ------------------------------------------------------------------ */
+const STORAGE_KEY = "attendance-records-v1";
+const PROFILE_STORAGE_KEY = "member-profiles-v1";
+const PROJECT_STORAGE_KEY = "project-list-v1";
+
+export default function App() {
+  const baseMembers = useMemo(() => buildMembers(), []);
+  const { records: initialRecords, dates } = useMemo(() => buildHistory(baseMembers), [baseMembers]);
+  const [records, setRecords] = useState(initialRecords);
+  const [storageReady, setStorageReady] = useState(false);
+  const [storageNote, setStorageNote] = useState("");
+
+  const [profileData, setProfileData] = useState(() => {
+    const map = {};
+    baseMembers.forEach((m) => { map[m.id] = { skills: m.skills, certifications: m.certifications }; });
+    return map;
+  });
+
+  const members = useMemo(
+    () => baseMembers.map((m) => ({
+      ...m,
+      skills: profileData[m.id]?.skills || m.skills,
+      certifications: profileData[m.id]?.certifications || m.certifications,
+    })),
+    [baseMembers, profileData]
+  );
+
+  const [projectList, setProjectList] = useState(DEFAULT_PROJECTS);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const [attResult, profResult, projResult] = await Promise.allSettled([
+          window.storage.get(STORAGE_KEY, true),
+          window.storage.get(PROFILE_STORAGE_KEY, true),
+          window.storage.get(PROJECT_STORAGE_KEY, true),
+        ]);
+        if (mounted && attResult.status === "fulfilled" && attResult.value?.value) {
+          setRecords(JSON.parse(attResult.value.value));
+        } else {
+          await window.storage.set(STORAGE_KEY, JSON.stringify(initialRecords), true);
+        }
+        if (mounted && profResult.status === "fulfilled" && profResult.value?.value) {
+          setProfileData(JSON.parse(profResult.value.value));
+        } else {
+          await window.storage.set(PROFILE_STORAGE_KEY, JSON.stringify(profileData), true);
+        }
+        if (mounted && projResult.status === "fulfilled" && projResult.value?.value) {
+          setProjectList(JSON.parse(projResult.value.value));
+        } else {
+          await window.storage.set(PROJECT_STORAGE_KEY, JSON.stringify(DEFAULT_PROJECTS), true);
+        }
+        if (mounted) setStorageNote("Synced · shared with all managers");
+      } catch (e) {
+        try {
+          await window.storage.set(STORAGE_KEY, JSON.stringify(initialRecords), true);
+          await window.storage.set(PROFILE_STORAGE_KEY, JSON.stringify(profileData), true);
+          await window.storage.set(PROJECT_STORAGE_KEY, JSON.stringify(DEFAULT_PROJECTS), true);
+          if (mounted) setStorageNote("Synced · shared with all managers");
+        } catch (e2) {
+          if (mounted) setStorageNote("Storage unavailable · changes stay local this session");
+        }
+      } finally {
+        if (mounted) setStorageReady(true);
+      }
+    })();
+    return () => { mounted = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const saveProfile = (memberId, skills, certifications) => {
+    setProfileData((prev) => {
+      const next = { ...prev, [memberId]: { skills, certifications } };
+      window.storage.set(PROFILE_STORAGE_KEY, JSON.stringify(next), true).catch(() => {});
+      return next;
+    });
+  };
+
+  const addProject = (name) => {
+    setProjectList((prev) => {
+      if (prev.includes(name)) return prev;
+      const next = [...prev, name];
+      window.storage.set(PROJECT_STORAGE_KEY, JSON.stringify(next), true).catch(() => {});
+      return next;
+    });
+  };
+
+  const lastDate = dates[dates.length - 1];
+  const [date, setDate] = useState(new Date(lastDate + "T00:00:00"));
+  const [view, setView] = useState("dashboard");
+  const [profileId, setProfileId] = useState(null);
+
+  const openProfile = useCallback((id) => { setProfileId(id); setView("profile"); }, []);
+  const nav = (v) => { setView(v); setProfileId(null); };
+
+  const updateRecord = (memberId, field, value) => {
+    const dKey = toKey(date);
+    setRecords((prev) => {
+      const dayRow = prev[dKey] || {};
+      const currentRec = dayRow[memberId] || {};
+      const next = {
+        ...prev,
+        [dKey]: { ...dayRow, [memberId]: { ...currentRec, [field]: value } },
+      };
+      window.storage.set(STORAGE_KEY, JSON.stringify(next), true).catch(() => {});
+      return next;
+    });
+  };
+
+  const NAV_ITEMS = [
+    { k: "dashboard", l: "Dashboard", icon: LayoutGrid },
+    { k: "team", l: "Team directory", icon: Users },
+    { k: "history", l: "History", icon: HistoryIcon },
+  ];
+
+  const VIEW_META = {
+    dashboard: { title: "Team dashboard", sub: "Daily attendance, location & allocation across the team." },
+    team: { title: "Team directory", sub: "Browse the team and open a profile for skills & certifications." },
+    history: { title: "Attendance history", sub: "Track WFH quota usage and past attendance per member." },
+    profile: { title: "Member profile", sub: "Skill matrix, certifications and attendance log." },
+  };
+
+  return (
+    <div style={{
+      background: T.bg, color: T.text, minHeight: "100%", fontFamily: FONT_SANS,
+      display: "flex", width: "100%", WebkitFontSmoothing: "antialiased",
+    }}>
+      <aside style={{
+        width: 224, flexShrink: 0, background: T.panel, borderRight: `1px solid ${T.border}`,
+        padding: "18px 12px", display: "flex", flexDirection: "column", gap: 2,
+      }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 8px", marginBottom: 24 }}>
+          <div style={{
+            width: 30, height: 30, borderRadius: 8, background: "linear-gradient(135deg, #4F46E5, #7C3AED)",
+            display: "flex", alignItems: "center", justifyContent: "center", color: "#FFFFFF",
+            fontFamily: FONT_SANS, fontWeight: 800, fontSize: 13.5, boxShadow: "0 2px 5px rgba(79,70,229,0.35)",
+          }}>OD</div>
+          <div>
+            <div style={{ fontFamily: FONT_SANS, fontWeight: 700, fontSize: 14, letterSpacing: -0.1, color: T.text }}>OpsDesk</div>
+            <div style={{ fontSize: 10, color: T.faint, fontWeight: 500 }}>Team operations</div>
+          </div>
+        </div>
+
+        <div style={{ fontSize: 10.5, color: T.faint, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", padding: "0 10px", marginBottom: 6 }}>
+          Workspace
+        </div>
+        {NAV_ITEMS.map(({ k, l, icon: Icon }) => {
+          const active = view === k || (k === "team" && view === "profile");
+          return (
+            <button key={k} onClick={() => nav(k)} style={{
+              display: "flex", alignItems: "center", gap: 10, padding: "9px 10px", borderRadius: 8,
+              background: active ? T.cyanDim : "transparent", border: "none", cursor: "pointer",
+              color: active ? T.cyan : T.muted, fontFamily: FONT_SANS, fontSize: 13.5, fontWeight: active ? 600 : 500,
+              textAlign: "left", transition: "background 0.12s, color 0.12s",
+            }}
+              onMouseEnter={(e) => { if (!active) e.currentTarget.style.background = T.panel2; }}
+              onMouseLeave={(e) => { if (!active) e.currentTarget.style.background = "transparent"; }}
+            >
+              <Icon size={16} strokeWidth={2} /> {l}
+            </button>
+          );
+        })}
+
+        <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{
+            padding: "10px 12px", borderRadius: 10, background: T.panel2, border: `1px solid ${T.border}`,
+          }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: storageReady ? T.green : T.amber }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: T.text }}>Manager view</span>
+            </div>
+            <div style={{ fontSize: 10.5, color: T.faint, lineHeight: 1.5 }}>
+              {storageReady ? storageNote : "Connecting to storage…"}
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column" }}>
+        <header style={{
+          background: T.panel, borderBottom: `1px solid ${T.border}`,
+          padding: "18px 32px", display: "flex", alignItems: "center", justifyContent: "space-between",
+        }}>
+          <div>
+            <h1 style={{ margin: 0, fontSize: 18.5, fontWeight: 700, color: T.text, letterSpacing: -0.2 }}>
+              {VIEW_META[view].title}
+            </h1>
+            <div style={{ fontSize: 12.5, color: T.muted, marginTop: 3 }}>{VIEW_META[view].sub}</div>
+          </div>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 8, padding: "6px 12px 6px 8px",
+            background: T.panel2, border: `1px solid ${T.border}`, borderRadius: 999,
+          }}>
+            <div style={{
+              width: 26, height: 26, borderRadius: "50%", background: T.cyanDim, color: T.cyan,
+              display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700,
+            }}>MG</div>
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: T.text }}>Manager</span>
+          </div>
+        </header>
+
+        <main style={{ flex: 1, padding: "26px 32px", minWidth: 0, overflowX: "hidden" }}>
+          {view === "dashboard" && (
+            <Dashboard
+              members={members} records={records} dates={dates} date={date} setDate={setDate}
+              onOpenProfile={openProfile}
+              onUpdateRecord={updateRecord}
+              projectList={projectList}
+              onAddProject={addProject}
+            />
+          )}
+          {view === "team" && (
+            <TeamDirectory members={members} records={records} dates={dates} date={date} onOpenProfile={openProfile} />
+          )}
+          {view === "history" && (
+            <HistoryView members={members} records={records} dates={dates} onOpenProfile={openProfile} />
+          )}
+          {view === "profile" && profileId && (
+            <MemberProfile
+              member={members.find((m) => m.id === profileId)}
+              records={records} dates={dates}
+              onBack={() => nav("team")}
+              onSaveProfile={(skills, certifications) => saveProfile(profileId, skills, certifications)}
+            />
+          )}
+        </main>
+      </div>
+    </div>
+  );
+}
