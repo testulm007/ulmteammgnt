@@ -1,0 +1,512 @@
+[DEBUG] Watching for changes in setting files /root/.claude/settings.json, /root/.claude/settings.json, /root/.claude/settings.local.json...
+[DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'userSettings': ["Bash"]
+[DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'projectSettings': ["Bash"]
+[DEBUG] Applying permission update: Adding 1 allow rule(s) to destination 'localSettings': ["Bash"]
+[DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+[DEBUG] Creating shell snapshot for bash (/bin/bash)
+[DEBUG] Looking for shell config file: /root/.bashrc
+[DEBUG] Snapshots directory: /root/.claude/shell-snapshots
+[DEBUG] Creating snapshot at: /root/.claude/shell-snapshots/snapshot-bash-1786126282117-iscfgi.sh
+[DEBUG] Shell binary exists: true
+[DEBUG] Execution timeout: 10000ms
+[DEBUG] Writing to temp file: /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126282121
+[DEBUG] Temp file written successfully, size: 2 bytes
+[DEBUG] Renaming /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126282121 to /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json
+[DEBUG] File /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json written atomically
+[DEBUG] Registered 0 hooks from 0 plugins
+[DEBUG] Loading skills from directories: managed=/etc/claude-code/.claude/skills, user=/root/.claude/skills, project=/root/.claude/skills
+[DEBUG] Loaded 0 skills total (managed: 0, user: 0, project: 0)
+[DEBUG] Total plugin commands loaded: 0
+[DEBUG] Total plugin skills loaded: 0
+[DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/usr/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg)
+[DEBUG] Shell snapshot created successfully (3485 bytes)
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126282449
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499312 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126282449 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126284921
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499394 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126284921 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126291316
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499414 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126291316 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126291332
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499414 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126291332 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126293110
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499485 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126293110 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126302976
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499516 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126302976 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126302993
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499536 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126302993 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Executing hooks for SessionStart:startup
+[DEBUG] Getting matching hook commands for SessionStart with query: startup
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126303050
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499536 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126303050 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126303060
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 499572 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126303060 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126303074
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500023 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126303074 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] AutoUpdaterWrapper: Installation type: npm-global, using native: false
+[DEBUG] performStartupChecks called, ENABLE_PLUGINS=undefined
+[DEBUG] Skipping plugin installations - ENABLE_PLUGINS not set
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126303353
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500131 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126303353 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126303494
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500131 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126303494 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] AutoUpdater: Detected installation type: npm-global
+[DEBUG] AutoUpdater: Using global update method
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126306431
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500130 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126306431 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Executing hooks for UserPromptSubmit
+[DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] FileHistory: Added snapshot for 0440c9ba-d4ff-4a08-b12a-77cd74040c63, tracking 0 files
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126340846
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500265 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126340846 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[ERROR] Error: Error: 400 {"error":{"message":"400: {'error': 'completion: Invalid model name passed in model=claude-3-5-haiku-20241022'}","type":"None","param":"None","code":"400"}}
+    at i9.generate (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:881:18710)
+    at bP.makeStatusError (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:1026:2117)
+    at bP.makeRequest (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:1026:5330)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[ERROR] SyntaxError: SyntaxError: Unexpected token 'A', "API Error:"... is not valid JSON
+    at JSON.parse (<anonymous>)
+    at file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:745:9912
+    at Q (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:711:14235)
+    at B_2 (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:1045:27917)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: Glob
+[DEBUG] Executing hooks for PreToolUse:Glob
+[DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Executing hooks for PostToolUse:Glob
+[DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: Glob
+[DEBUG] Executing hooks for PreToolUse:Glob
+[DEBUG] Getting matching hook commands for PreToolUse with query: Glob
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Executing hooks for PostToolUse:Glob
+[DEBUG] Getting matching hook commands for PostToolUse with query: Glob
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Glob" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: Read
+[DEBUG] Executing hooks for PreToolUse:Read
+[DEBUG] Getting matching hook commands for PreToolUse with query: Read
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Executing hooks for PostToolUse:Read
+[DEBUG] Getting matching hook commands for PostToolUse with query: Read
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Read" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[ERROR] Error streaming, falling back to non-streaming mode: Unable to parse tool parameter JSON from model. Please retry your request or adjust your prompt. Error: SyntaxError: Unexpected non-whitespace character after JSON at position 19. JSON: {"pattern":"*.jsx"}{"pattern":"*.js"}
+[DEBUG] Executing hooks for Stop
+[DEBUG] Getting matching hook commands for Stop with query: undefined
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126349802
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500314 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126349802 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude/settings.json.tmp.2521.1786126363564
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 125 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude/settings.json.tmp.2521.1786126363564 to /root/.claude/settings.json
+[DEBUG] File /root/.claude/settings.json written atomically
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Executing hooks for UserPromptSubmit
+[DEBUG] Getting matching hook commands for UserPromptSubmit with query: undefined
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] FileHistory: Making snapshot for message 7593c462-2295-4a10-821c-6feccaebebce
+[DEBUG] FileHistory: Added snapshot for 7593c462-2295-4a10-821c-6feccaebebce, tracking 0 files
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126408248
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500649 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126408248 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[ERROR] Error: Error: 400 {"error":{"message":"400: {'error': 'completion: Invalid model name passed in model=claude-3-5-haiku-20241022'}","type":"None","param":"None","code":"400"}}
+    at i9.generate (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:881:18710)
+    at bP.makeStatusError (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:1026:2117)
+    at bP.makeRequest (file:///usr/lib/node_modules/@anthropic-ai/claude-code/cli.js:1026:5330)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: TodoWrite
+[DEBUG] Executing hooks for PreToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126410250
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 333 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126410250 to /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json
+[DEBUG] File /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json written atomically
+[DEBUG] Executing hooks for PostToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: TodoWrite
+[DEBUG] Executing hooks for PreToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126413082
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 337 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126413082 to /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json
+[DEBUG] File /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json written atomically
+[DEBUG] Executing hooks for PostToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: Edit
+[DEBUG] Executing hooks for PreToolUse:Edit
+[DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Permission suggestions for Edit: [
+  {
+    "type": "setMode",
+    "mode": "acceptEdits",
+    "destination": "session"
+  }
+]
+[DEBUG] Getting matching hook commands for Notification with query: undefined
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+[DEBUG] Applying permission update: Setting mode to 'acceptEdits'
+[DEBUG] AutoUpdaterWrapper: Installation type: npm-global, using native: false
+[DEBUG] FileHistory: Tracked file modification for /root/Team.jsx
+[DEBUG] Writing to temp file: /root/Team.jsx.tmp.2521.1786126433131
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 62203 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/Team.jsx.tmp.2521.1786126433131 to /root/Team.jsx
+[DEBUG] File /root/Team.jsx written atomically
+[DEBUG] Executing hooks for PostToolUse:Edit
+[DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] AutoUpdater: Detected installation type: npm-global
+[DEBUG] AutoUpdater: Using global update method
+[DEBUG] Stream started - received first chunk
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126435533
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500649 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126435533 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] executePreToolHooks called for tool: Edit
+[DEBUG] Executing hooks for PreToolUse:Edit
+[DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/Team.jsx.tmp.2521.1786126436004
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 62388 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/Team.jsx.tmp.2521.1786126436004 to /root/Team.jsx
+[DEBUG] File /root/Team.jsx written atomically
+[DEBUG] Executing hooks for PostToolUse:Edit
+[DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: TodoWrite
+[DEBUG] Executing hooks for PreToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126438059
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 339 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126438059 to /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json
+[DEBUG] File /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json written atomically
+[DEBUG] Executing hooks for PostToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: Edit
+[DEBUG] Executing hooks for PreToolUse:Edit
+[DEBUG] Getting matching hook commands for PreToolUse with query: Edit
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/Team.jsx.tmp.2521.1786126441025
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 62350 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/Team.jsx.tmp.2521.1786126441025 to /root/Team.jsx
+[DEBUG] File /root/Team.jsx written atomically
+[DEBUG] Executing hooks for PostToolUse:Edit
+[DEBUG] Getting matching hook commands for PostToolUse with query: Edit
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "Edit" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] executePreToolHooks called for tool: TodoWrite
+[DEBUG] Executing hooks for PreToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PreToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126442949
+[DEBUG] Preserving file permissions: 100644
+[DEBUG] Temp file written successfully, size: 2 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json.tmp.2521.1786126442949 to /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json
+[DEBUG] File /root/.claude/todos/571a77c0-6aa0-4517-abb9-e2fd6869ba9b-agent-571a77c0-6aa0-4517-abb9-e2fd6869ba9b.json written atomically
+[DEBUG] Executing hooks for PostToolUse:TodoWrite
+[DEBUG] Getting matching hook commands for PostToolUse with query: TodoWrite
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "TodoWrite" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Hooks: getAsyncHookResponseAttachments called
+[DEBUG] Hooks: checkForNewResponses called
+[DEBUG] Hooks: Found 0 total hooks in registry
+[DEBUG] Hooks: checkForNewResponses returning 0 responses
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Slash commands included in SlashCommand tool:
+[DEBUG] Stream started - received first chunk
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126444650
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500687 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126444650 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Executing hooks for Stop
+[DEBUG] Getting matching hook commands for Stop with query: undefined
+[DEBUG] Found 0 hook matchers in settings
+[DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+[DEBUG] Found 0 hook commands to execute
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126444672
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500712 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126444672 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126459466
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500737 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126459466 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] AutoUpdaterWrapper: Installation type: npm-global, using native: false
+[DEBUG] AutoUpdater: Detected installation type: npm-global
+[DEBUG] AutoUpdater: Using global update method
+[DEBUG] AutoUpdaterWrapper: Installation type: npm-global, using native: false
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126464521
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500737 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126464521 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] AutoUpdater: Detected installation type: npm-global
+[DEBUG] AutoUpdater: Using global update method
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126466727
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500737 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126466727 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] AutoUpdaterWrapper: Installation type: npm-global, using native: false
+[DEBUG] AutoUpdater: Detected installation type: npm-global
+[DEBUG] AutoUpdater: Using global update method
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126470981
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500737 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126470981 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] AutoUpdaterWrapper: Installation type: npm-global, using native: false
+[DEBUG] AutoUpdater: Detected installation type: npm-global
+[DEBUG] AutoUpdater: Using global update method
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126491632
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500737 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126491632 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Cleaned up session snapshot: /root/.claude/shell-snapshots/snapshot-bash-1786126282117-iscfgi.sh
+[DEBUG] FileHistory: Making snapshot for message 4e8296c3-cdfb-4a53-90df-b2d471492bfa
+[DEBUG] FileHistory: Added snapshot for 4e8296c3-cdfb-4a53-90df-b2d471492bfa, tracking 1 files
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126492205
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500819 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126492205 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126492274
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 500843 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126492274 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically
+[DEBUG] Metrics opt-out check failed: No API key available
+[DEBUG] Metrics check failed, defaulting to disabled
+[DEBUG] Metrics export disabled by organization setting
+[DEBUG] BigQuery metrics exporter flush complete
+[DEBUG] BigQuery metrics exporter flush complete
+[DEBUG] BigQuery metrics exporter shutdown complete
+[DEBUG] Writing to temp file: /root/.claude.json.tmp.2521.1786126492292
+[DEBUG] Preserving file permissions: 100600
+[DEBUG] Temp file written successfully, size: 501282 bytes
+[DEBUG] Applied original permissions to temp file
+[DEBUG] Renaming /root/.claude.json.tmp.2521.1786126492292 to /root/.claude.json
+[DEBUG] File /root/.claude.json written atomically

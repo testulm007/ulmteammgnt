@@ -1,0 +1,29 @@
+model_list:
+  - model_name: claude-sonnet-4-6
+    litellm_params:
+      model: openrouter/x-ai/grok-4.3
+      api_base: os.environ/OPENAI_API_BASE
+      api_key: os.environ/OPENAI_API_KEY
+      drop_params: true
+  - model_name: claude-haiku-4-5-20251001
+    litellm_params:
+      model: openrouter/x-ai/grok-4.3
+      api_base: os.environ/OPENAI_API_BASE
+      api_key: os.environ/OPENAI_API_KEY
+      drop_params: true
+  - model_name: claude-haiku-4-5
+    litellm_params:
+      model: openrouter/x-ai/grok-4.3
+      api_base: os.environ/OPENAI_API_BASE
+      api_key: os.environ/OPENAI_API_KEY
+      drop_params: true
+  - model_name: claude-opus-4-7
+    litellm_params:
+      model: openrouter/x-ai/grok-4.3
+      api_base: os.environ/OPENAI_API_BASE
+      api_key: os.environ/OPENAI_API_KEY
+      drop_params: true
+general_settings:
+  master_key: sk-test-123
+litellm_settings:
+  drop_params: true
