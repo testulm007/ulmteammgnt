@@ -9,6 +9,46 @@ services:
     restart: unless-stopped
     networks:
       - app-network
+    depends_on:
+      - backend
+      - postgres
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ulmteammgnt-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=ulmteammgnt
+      - DB_USER=postgres
+      - DB_PASSWORD=your_secure_password
+    restart: unless-stopped
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: ulmteammgnt-db
+    environment:
+      - POSTGRES_DB=ulmteammgnt
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=your_secure_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+    restart: unless-stopped
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
 
 networks:
   app-network:
